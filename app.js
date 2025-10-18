@@ -600,13 +600,9 @@ class BIConfigBuilder {
         }
         document.getElementById('clearDebugBtn').addEventListener('click', () => this.clearDebug());
 
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
-        });
-
-        document.querySelectorAll('.panel-tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => this.switchPanelTab(e.target.dataset.panel));
+        // Tab switching for sidebar
+        document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.switchSidebarTab(e.target.dataset.tab));
         });
 
         // Variable search

@@ -1786,22 +1786,24 @@ select.form-control {
 /* Responsive Design */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 250px;
+    width: 300px;
   }
 }
 
 @media (max-width: 768px) {
   .main-content {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
   
   .sidebar {
     width: 100%;
-    height: 200px;
+    height: 300px;
+    border-left: none;
+    border-bottom: 1px solid var(--color-border);
   }
   
-  .bottom-panel {
-    height: 200px;
+  .workspace {
+    height: calc(100vh - 400px);
   }
 }
 

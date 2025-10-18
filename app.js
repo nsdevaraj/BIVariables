@@ -598,7 +598,12 @@ class BIConfigBuilder {
         } else {
             console.error('addStateBtn not found');
         }
-        document.getElementById('clearDebugBtn').addEventListener('click', () => this.clearDebug());
+        
+        // Clear debug button - removed in new UI
+        // const clearDebugBtn = document.getElementById('clearDebugBtn');
+        // if (clearDebugBtn) {
+        //     clearDebugBtn.addEventListener('click', () => this.clearDebug());
+        // }
 
         // Tab switching for sidebar
         document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {

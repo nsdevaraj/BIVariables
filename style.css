@@ -1179,20 +1179,29 @@ select.form-control {
   flex: 1;
   display: flex;
   min-height: 0;
+  overflow: hidden;
 }
 
-/* Sidebars */
+/* Workspace - Now on the LEFT */
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: var(--color-background);
+}
+
+/* Sidebar - Now on the RIGHT with tabs */
 .sidebar {
-  width: 300px;
+  width: 350px;
   background-color: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
 }
 
 .sidebar--right {
-  border-right: none;
   border-left: 1px solid var(--color-border);
 }
 

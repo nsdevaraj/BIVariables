@@ -9,142 +9,79 @@
 <body>
     <div class="app-container">
         <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <h1>📊 BI Configuration Builder</h1>
-                <div class="header-actions">
-                    <button class="btn btn--secondary btn--sm" id="testModeBtn">🧪 Test Mode</button>
-                    <button class="btn btn--primary btn--sm" id="saveConfigBtn">💾 Save Configuration</button>
-                </div>
+        <header class="header">
+            <h1>BI Configuration Builder</h1>
+            <div class="header-actions">
+                <button id="testModeBtn" class="btn btn--secondary btn--sm">Test Mode</button>
+                <button id="saveConfigBtn" class="btn btn--primary btn--sm">Save Config</button>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Left Sidebar: Global Variables -->
-            <aside class="sidebar sidebar--left">
-                <div class="sidebar-header">
-                    <h3>Global Variables</h3>
-                    <button class="btn btn--primary btn--sm" id="addVariableBtn">+ Add Variable</button>
-                </div>
-                
-                <div class="search-box">
-                    <input type="text" class="form-control" id="variableSearch" placeholder="Search variables...">
-                </div>
-                
-                <div class="variables-list" id="variablesList">
-                    <!-- Variables will be populated by JavaScript -->
-                </div>
-            </aside>
-
-            <!-- Center Workspace -->
+            <!-- Left: Workspace -->
             <section class="workspace">
                 <div class="workspace-header">
-                    <div class="workspace-tabs">
-                        <!-- <button class="tab-btn active" data-tab="connections">🔗 Connections</button> -->
-                        <button class="tab-btn active" data-tab="elements">📊 Visual Elements</button>
-                        <!-- <button class="tab-btn" data-tab="flow">🌊 Flow Diagram</button> -->
-                    </div>
-                    <div class="workspace-actions">
-                        <button class="btn btn--secondary btn--sm" id="addElementBtn">+ Add Element</button>
-                        <button class="btn btn--outline btn--sm" id="clearWorkspaceBtn">Clear</button>
-                    </div>
+                    <h3>Visual Elements</h3>
+                    <button id="addElementBtn" class="btn btn--primary btn--sm">+ Add Element</button>
                 </div>
-                
-                <div class="workspace-content">
-                    <!-- Connections Tab -->
-                    <!-- <div class="tab-panel active" id="connectionsTab">
-                        <div class="connections-canvas" id="connectionsCanvas">
-                            <div class="canvas-message">
-                                <p>📍 Drag variables from the left panel to create connections</p>
-                                <p>🎯 Drop on visual elements to establish event bindings</p>
-                            </div>
-                        </div>
-                    </div>
-                     -->
-                    <!-- Elements Tab -->
-                    <div class="tab-panel" id="elementsTab">
-                        <div class="elements-grid" id="elementsGrid">
-                            <!-- Visual elements will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <!-- Flow Diagram Tab -->
-                    <div class="tab-panel" id="flowTab">
-                        <div class="flow-diagram" id="flowDiagram">
-                            <div class="flow-message">
-                                <p>🌊 Flow diagram shows data relationships</p>
-                                <p>Events → Variables → States → Elements</p>
-                            </div>
-                        </div>
-                    </div>
+                <div id="elementsGrid" class="elements-grid">
+                    <!-- JS will populate this -->
                 </div>
             </section>
 
-            <!-- Right Sidebar: Properties -->
-            <aside class="sidebar sidebar--right">
-                <div class="sidebar-header">
-                    <h3>Properties</h3>
-                    <span class="selection-indicator" id="selectionIndicator">No selection</span>
+            <!-- Right: Sidebar with Tabs -->
+            <aside class="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="sidebar-tab-btn active" data-panel="variables">Variables</button>
+                    <button class="sidebar-tab-btn" data-panel="properties">Properties</button>
+                    <button class="sidebar-tab-btn" data-panel="events">Events</button>
+                    <button class="sidebar-tab-btn" data-panel="states">States</button>
                 </div>
                 
-                <div class="properties-content" id="propertiesContent">
-                    <div class="empty-state">
-                        <p>👆 Select a variable or element to view properties</p>
+                <!-- Variables Panel -->
+                <div id="variablesPanel" class="sidebar-panel active">
+                    <div class="sidebar-header">
+                        <h3>Global Variables</h3>
+                        <button id="addVariableBtn" class="btn btn--primary btn--sm">+ Add</button>
                     </div>
+                    <div class="search-box">
+                        <input type="text" id="variableSearch" class="form-control" placeholder="Search...">
+                    </div>
+                    <div id="variablesList" class="item-list"></div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div id="propertiesPanel" class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h3>Properties</h3>
+                        <span id="selectionIndicator">No selection</span>
+                    </div>
+                    <div id="propertiesContent" class="properties-content"></div>
+                </div>
+
+                <!-- Events Panel -->
+                <div id="eventsPanel" class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h3>Events</h3>
+                        <button id="addEventBtn" class="btn btn--primary btn--sm">+ Add</button>
+                    </div>
+                    <div id="eventsList" class="item-list"></div>
+                </div>
+
+                <!-- States Panel -->
+                <div id="statesPanel" class="sidebar-panel">
+                    <div class="sidebar-header">
+                        <h3>States</h3>
+                        <button id="addStateBtn" class="btn btn--primary btn--sm">+ Add</button>
+                    </div>
+                    <div id="statesList" class="item-list"></div>
                 </div>
             </aside>
         </main>
-
-        <!-- Bottom Panel: Configuration Details -->
-        <section class="bottom-panel">
-            <div class="panel-tabs">
-                <button class="panel-tab-btn active" data-panel="events">⚡ Events</button>
-                <button class="panel-tab-btn" data-panel="states">🎯 States</button>
-                <!-- <button class="panel-tab-btn" data-panel="debug">🐛 Debug</button> -->
-            </div>
-            
-            <div class="panel-content">
-                <!-- Events Panel -->
-                <div class="panel-section active" id="eventsPanel">
-                    <div class="panel-header">
-                        <h4>Event Configuration</h4>
-                        <button class="btn btn--primary btn--sm" id="addEventBtn">+ Add Event</button>
-                    </div>
-                    <div class="events-list" id="eventsList">
-                        <!-- Events will be populated here -->
-                    </div>
-                </div>
-                
-                <!-- States Panel -->
-                <div class="panel-section" id="statesPanel">
-                    <div class="panel-header">
-                        <h4>State Configuration</h4>
-                        <button class="btn btn--primary btn--sm" id="addStateBtn">+ Add State</button>
-                    </div>
-                    <div class="states-list" id="statesList">
-                        <!-- States will be populated here -->
-                    </div>
-                </div>
-                
-                <!-- Debug Panel -->
-                <div class="panel-section" id="debugPanel">
-                    <div class="panel-header">
-                        <h4>Debug Information</h4>
-                        <button class="btn btn--outline btn--sm" id="clearDebugBtn">Clear</button>
-                    </div>
-                    <div class="debug-console" id="debugConsole">
-                        <div class="debug-message info">
-                            <span class="timestamp">[10:30:45]</span>
-                            <span class="message">Application initialized</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
 
-    <!-- Modals -->
+    <!-- Modals (Original, Unchanged) -->
     <!-- Variable Modal -->
     <div class="modal" id="variableModal">
         <div class="modal-content">
@@ -174,21 +111,14 @@
                         <label class="form-label" for="variableDefault">Default Value</label>
                         <input type="text" class="form-control" id="variableDefault">
                     </div>
-                    <!-- NumberVariable specific fields -->
                     <div id="numberVariableFields" style="display: none;">
                         <div class="form-group">
                             <label class="form-label" for="thresholdVariable">Threshold Variable (Optional)</label>
-                            <select class="form-control" id="thresholdVariable">
-                                <option value="">No threshold</option>
-                                <!-- Variables will be populated by JavaScript -->
-                            </select>
+                            <select class="form-control" id="thresholdVariable"><option value="">No threshold</option></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="budgetVariable">Budget Variable (Optional)</label>
-                            <select class="form-control" id="budgetVariable">
-                                <option value="">No budget</option>
-                                <!-- Variables will be populated by JavaScript -->
-                            </select>
+                            <select class="form-control" id="budgetVariable"><option value="">No budget</option></select>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="thresholdSource">Threshold Source</label>
@@ -205,7 +135,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--outline" id="cancelVariableBtn">Cancel</button>
+                <button class="btn btn--secondary" id="cancelVariableBtn">Cancel</button>
                 <button class="btn btn--primary" id="saveVariableBtn">Save</button>
             </div>
         </div>
@@ -220,26 +150,11 @@
             </div>
             <div class="modal-body">
                 <div class="element-types">
-                    <div class="element-type" data-type="Chart">
-                        <span class="element-icon">📊</span>
-                        <span class="element-name">Chart</span>
-                    </div>
-                    <div class="element-type" data-type="KPI">
-                        <span class="element-icon">📈</span>
-                        <span class="element-name">KPI Card</span>
-                    </div>
-                    <div class="element-type" data-type="Filter">
-                        <span class="element-icon">🔽</span>
-                        <span class="element-name">Filter</span>
-                    </div>
-                    <div class="element-type" data-type="Table">
-                        <span class="element-icon">📋</span>
-                        <span class="element-name">Table</span>
-                    </div>
-                    <div class="element-type" data-type="Button">
-                        <span class="element-icon">🔘</span>
-                        <span class="element-name">Button</span>
-                    </div>
+                    <div class="element-type" data-type="Chart"><span class="element-icon">📊</span><span class="element-name">Chart</span></div>
+                    <div class="element-type" data-type="KPI"><span class="element-icon">📈</span><span class="element-name">KPI Card</span></div>
+                    <div class="element-type" data-type="Filter"><span class="element-icon">🔽</span><span class="element-name">Filter</span></div>
+                    <div class="element-type" data-type="Table"><span class="element-icon">📋</span><span class="element-name">Table</span></div>
+                    <div class="element-type" data-type="Button"><span class="element-icon">🔘</span><span class="element-name">Button</span></div>
                 </div>
             </div>
         </div>
@@ -254,44 +169,16 @@
             </div>
             <div class="modal-body">
                 <form id="eventForm">
-                    <div class="form-group">
-                        <label class="form-label" for="eventName">Event Name</label>
-                        <input type="text" class="form-control" id="eventName" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="eventElement">Element</label>
-                        <select class="form-control" id="eventElement" required>
-                            <!-- Elements will be populated by JavaScript -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="eventTrigger">Trigger</label>
-                        <select class="form-control" id="eventTrigger">
-                            <!-- Trigger options will be populated based on element type -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="eventAction">Action</label>
-                        <select class="form-control" id="eventAction">
-                            <option value="update_variable">Update Variable</option>
-                            <option value="toggle_variable">Toggle Variable</option>
-                            <option value="reset_variable">Reset Variable</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="eventTarget">Target Variable</label>
-                        <select class="form-control" id="eventTarget">
-                            <!-- Variables will be populated by JavaScript -->
-                        </select>
-                    </div>
-                    <div class="form-group" id="updateValueGroup" style="display: none;">
-                        <label class="form-label" for="eventValue">New Value</label>
-                        <input type="text" class="form-control" id="eventValue" placeholder="Enter the value to update to">
-                    </div>
+                    <div class="form-group"><label for="eventName">Event Name</label><input type="text" id="eventName" class="form-control" required></div>
+                    <div class="form-group"><label for="eventElement">Element</label><select id="eventElement" class="form-control" required></select></div>
+                    <div class="form-group"><label for="eventTrigger">Trigger</label><select id="eventTrigger" class="form-control"></select></div>
+                    <div class="form-group"><label for="eventAction">Action</label><select id="eventAction" class="form-control"><option value="update_variable">Update Variable</option><option value="toggle_variable">Toggle Variable</option></select></div>
+                    <div class="form-group"><label for="eventTarget">Target Variable</label><select id="eventTarget" class="form-control"></select></div>
+                    <div class="form-group" id="updateValueGroup"><label for="eventValue">New Value</label><input type="text" id="eventValue" class="form-control"></div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--outline" id="cancelEventBtn">Cancel</button>
+                <button class="btn btn--secondary" id="cancelEventBtn">Cancel</button>
                 <button class="btn btn--primary" id="saveEventBtn">Save Event</button>
             </div>
         </div>
@@ -306,81 +193,37 @@
             </div>
             <div class="modal-body">
                 <form id="stateForm">
-                    <div class="form-group">
-                        <label class="form-label" for="stateName">State Name</label>
-                        <input type="text" class="form-control" id="stateName" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="stateVariable">Variable</label>
-                        <select class="form-control" id="stateVariable">
-                            <!-- Variables will be populated by JavaScript -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="stateOperator">Condition</label>
-                        <select class="form-control" id="stateOperator">
-                            <option value="==">Equals (==)</option>
-                            <option value="!=">Not Equals (!=)</option>
-                            <option value=">">Greater Than (>)</option>
-                            <option value="<">Less Than (<)</option>
-                            <option value=">=">Greater or Equal (>=)</option>
-                            <option value="<=">Less or Equal (<=)</option>
-                            <option value="contains">Contains</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="compareType">Compare Against</label>
-                        <select class="form-control" id="compareType">
-                            <option value="value">Custom Value</option>
-                            <option value="variable">Another Variable</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="valueGroup">
-                        <label class="form-label" for="stateValue">Value</label>
-                        <input type="text" class="form-control" id="stateValue" required>
-                    </div>
-                    <div class="form-group" id="variableGroup" style="display: none;">
-                        <label class="form-label" for="compareVariable">Compare Variable</label>
-                        <select class="form-control" id="compareVariable">
-                            <!-- Variables will be populated by JavaScript -->
-                        </select>
-                    </div>
+                    <div class="form-group"><label for="stateName">State Name</label><input type="text" id="stateName" class="form-control" required></div>
+                    <div class="form-group"><label for="stateVariable">Variable</label><select id="stateVariable" class="form-control"></select></div>
+                    <div class="form-group"><label for="stateOperator">Condition</label><select id="stateOperator" class="form-control"><option value="==">Equals</option><option value="!=">Not Equals</option><option value=">">Greater Than</option><option value="<">Less Than</option></select></div>
+                    <div class="form-group"><label for="compareType">Compare Against</label><select id="compareType" class="form-control"><option value="value">Value</option><option value="variable">Variable</option></select></div>
+                    <div class="form-group" id="valueGroup"><label for="stateValue">Value</label><input type="text" id="stateValue" class="form-control" required></div>
+                    <div class="form-group" id="variableGroup" style="display: none;"><label for="compareVariable">Compare Variable</label><select id="compareVariable" class="form-control"></select></div>
+                    <div id="stateChangesList"></div>
                 </form>
-
-                <!-- Visual Elements and State Changes -->
-                <div class="state-changes-section">
-                    <h4>Visual Elements & State Changes</h4>
-                    <div class="state-changes-list" id="stateChangesList">
-                        <!-- State changes will be populated by JavaScript -->
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn--outline" id="cancelStateBtn">Cancel</button>
+                <button class="btn btn--secondary" id="cancelStateBtn">Cancel</button>
                 <button class="btn btn--primary" id="saveStateBtn">Save State</button>
             </div>
         </div>
     </div>
 
-    <!-- Test Mode Modal -->
+    <!-- Test Modal -->
     <div class="modal" id="testModal">
-        <div class="modal-content modal-content--large">
+        <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
-                <h3>🧪 Test Mode - Live Preview</h3>
+                <h3>Test Mode</h3>
                 <button class="modal-close" id="closeTestModal">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="test-controls">
+            <div class="modal-body" style="display: flex; gap: 1rem;">
+                <div style="flex: 1;">
                     <h4>Simulate Events</h4>
-                    <div class="test-buttons" id="testButtons">
-                        <!-- Test buttons will be generated -->
-                    </div>
+                    <div id="testButtons"></div>
                 </div>
-                <div class="test-variables">
-                    <h4>Current Variable Values</h4>
-                    <div class="variables-monitor" id="variablesMonitor">
-                        <!-- Variable values will be shown here -->
-                    </div>
+                <div style="flex: 1;">
+                    <h4>Variables Monitor</h4>
+                    <div id="variablesMonitor"></div>
                 </div>
             </div>
         </div>

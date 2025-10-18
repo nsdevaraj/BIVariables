@@ -1248,6 +1248,20 @@ select.form-control {
   display: flex;
 }
 
+.sidebar-header {
+  padding: var(--space-16);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.selection-indicator {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
 /* Search Box */
 .search-box {
   padding: var(--space-16);

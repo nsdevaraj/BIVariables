@@ -21,30 +21,10 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Left Sidebar: Global Variables -->
-            <aside class="sidebar sidebar--left">
-                <div class="sidebar-header">
-                    <h3>Global Variables</h3>
-                    <button class="btn btn--primary btn--sm" id="addVariableBtn">+ Add Variable</button>
-                </div>
-                
-                <div class="search-box">
-                    <input type="text" class="form-control" id="variableSearch" placeholder="Search variables...">
-                </div>
-                
-                <div class="variables-list" id="variablesList">
-                    <!-- Variables will be populated by JavaScript -->
-                </div>
-            </aside>
-
-            <!-- Center Workspace -->
+            <!-- Left Panel: Visual Elements Workspace -->
             <section class="workspace">
                 <div class="workspace-header">
-                    <div class="workspace-tabs">
-                        <!-- <button class="tab-btn active" data-tab="connections">🔗 Connections</button> -->
-                        <button class="tab-btn active" data-tab="elements">📊 Visual Elements</button>
-                        <!-- <button class="tab-btn" data-tab="flow">🌊 Flow Diagram</button> -->
-                    </div>
+                    <h3 class="workspace-title">📊 Visual Elements</h3>
                     <div class="workspace-actions">
                         <button class="btn btn--secondary btn--sm" id="addElementBtn">+ Add Element</button>
                         <button class="btn btn--outline btn--sm" id="clearWorkspaceBtn">Clear</button>
@@ -52,63 +32,55 @@
                 </div>
                 
                 <div class="workspace-content">
-                    <!-- Connections Tab -->
-                    <!-- <div class="tab-panel active" id="connectionsTab">
-                        <div class="connections-canvas" id="connectionsCanvas">
-                            <div class="canvas-message">
-                                <p>📍 Drag variables from the left panel to create connections</p>
-                                <p>🎯 Drop on visual elements to establish event bindings</p>
-                            </div>
-                        </div>
-                    </div>
-                     -->
-                    <!-- Elements Tab -->
-                    <div class="tab-panel" id="elementsTab">
-                        <div class="elements-grid" id="elementsGrid">
-                            <!-- Visual elements will be populated here -->
-                        </div>
-                    </div>
-                    
-                    <!-- Flow Diagram Tab -->
-                    <div class="tab-panel" id="flowTab">
-                        <div class="flow-diagram" id="flowDiagram">
-                            <div class="flow-message">
-                                <p>🌊 Flow diagram shows data relationships</p>
-                                <p>Events → Variables → States → Elements</p>
-                            </div>
-                        </div>
+                    <div class="elements-grid" id="elementsGrid">
+                        <!-- Visual elements will be populated here -->
                     </div>
                 </div>
             </section>
 
-            <!-- Right Sidebar: Properties -->
+            <!-- Right Sidebar: Tabbed Configuration Panel -->
             <aside class="sidebar sidebar--right">
-                <div class="sidebar-header">
-                    <h3>Properties</h3>
-                    <span class="selection-indicator" id="selectionIndicator">No selection</span>
+                <div class="sidebar-tabs">
+                    <button class="sidebar-tab-btn active" data-tab="variables">Variables</button>
+                    <button class="sidebar-tab-btn" data-tab="properties">Properties</button>
+                    <button class="sidebar-tab-btn" data-tab="events">Events</button>
+                    <button class="sidebar-tab-btn" data-tab="states">States</button>
                 </div>
                 
-                <div class="properties-content" id="propertiesContent">
-                    <div class="empty-state">
-                        <p>👆 Select a variable or element to view properties</p>
+                <!-- Variables Tab -->
+                <div class="sidebar-panel active" id="variablesPanel">
+                    <div class="sidebar-header">
+                        <h3>Global Variables</h3>
+                        <button class="btn btn--primary btn--sm" id="addVariableBtn">+ Add</button>
+                    </div>
+                    
+                    <div class="search-box">
+                        <input type="text" class="form-control" id="variableSearch" placeholder="Search variables...">
+                    </div>
+                    
+                    <div class="variables-list" id="variablesList">
+                        <!-- Variables will be populated by JavaScript -->
                     </div>
                 </div>
-            </aside>
-        </main>
-
-        <!-- Bottom Panel: Configuration Details -->
-        <section class="bottom-panel">
-            <div class="panel-tabs">
-                <button class="panel-tab-btn active" data-panel="events">⚡ Events</button>
-                <button class="panel-tab-btn" data-panel="states">🎯 States</button>
-                <!-- <button class="panel-tab-btn" data-panel="debug">🐛 Debug</button> -->
-            </div>
-            
-            <div class="panel-content">
-                <!-- Events Panel -->
-                <div class="panel-section active" id="eventsPanel">
-                    <div class="panel-header">
-                        <h4>Event Configuration</h4>
+                
+                <!-- Properties Tab -->
+                <div class="sidebar-panel" id="propertiesPanel">
+                    <div class="sidebar-header">
+                        <h3>Properties</h3>
+                        <span class="selection-indicator" id="selectionIndicator">No selection</span>
+                    </div>
+                    
+                    <div class="properties-content" id="propertiesContent">
+                        <div class="empty-state">
+                            <p>👆 Select a variable or element to view properties</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Events Tab -->
+                <div class="sidebar-panel" id="eventsPanel">
+                    <div class="sidebar-header">
+                        <h3>Event Configuration</h3>
                         <button class="btn btn--primary btn--sm" id="addEventBtn">+ Add Event</button>
                     </div>
                     <div class="events-list" id="eventsList">
@@ -116,32 +88,18 @@
                     </div>
                 </div>
                 
-                <!-- States Panel -->
-                <div class="panel-section" id="statesPanel">
-                    <div class="panel-header">
-                        <h4>State Configuration</h4>
+                <!-- States Tab -->
+                <div class="sidebar-panel" id="statesPanel">
+                    <div class="sidebar-header">
+                        <h3>State Configuration</h3>
                         <button class="btn btn--primary btn--sm" id="addStateBtn">+ Add State</button>
                     </div>
                     <div class="states-list" id="statesList">
                         <!-- States will be populated here -->
                     </div>
                 </div>
-                
-                <!-- Debug Panel -->
-                <div class="panel-section" id="debugPanel">
-                    <div class="panel-header">
-                        <h4>Debug Information</h4>
-                        <button class="btn btn--outline btn--sm" id="clearDebugBtn">Clear</button>
-                    </div>
-                    <div class="debug-console" id="debugConsole">
-                        <div class="debug-message info">
-                            <span class="timestamp">[10:30:45]</span>
-                            <span class="message">Application initialized</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </aside>
+        </main>
     </div>
 
     <!-- Modals -->

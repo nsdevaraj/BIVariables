@@ -800,34 +800,31 @@ class BIConfigBuilder {
         });
     }
 
-    switchTab(tabName) {
-        // Update tab buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
+    switchSidebarTab(tabName) {
+        // Update sidebar tab buttons
+        document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        const targetBtn = document.querySelector(`.sidebar-tab-btn[data-tab="${tabName}"]`);
+        if (targetBtn) {
+            targetBtn.classList.add('active');
+        }
 
-        // Update tab panels
-        document.querySelectorAll('.tab-panel').forEach(panel => {
+        // Update sidebar panels
+        document.querySelectorAll('.sidebar-panel').forEach(panel => {
             panel.classList.remove('active');
         });
-        document.getElementById(`${tabName}Tab`).classList.add('active');
+        const targetPanel = document.getElementById(`${tabName}Panel`);
+        if (targetPanel) {
+            targetPanel.classList.add('active');
+        }
 
-        this.logDebug(`Switched to tab: ${tabName}`, 'info');
+        this.logDebug(`Switched to ${tabName} tab`, 'info');
     }
 
     switchPanelTab(panelName) {
-        // Update panel tab buttons
-        document.querySelectorAll('.panel-tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.querySelector(`[data-panel="${panelName}"]`).classList.add('active');
-
-        // Update panel sections
-        document.querySelectorAll('.panel-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        document.getElementById(`${panelName}Panel`).classList.add('active');
+        // Deprecated - kept for compatibility
+        this.switchSidebarTab(panelName);
     }
 
     renderVariables() {

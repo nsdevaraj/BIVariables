@@ -1509,64 +1509,6 @@ select.form-control {
   color: var(--color-text);
 }
 
-/* Bottom Panel */
-.bottom-panel {
-  height: 300px;
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-}
-
-.panel-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-background);
-}
-
-.panel-tab-btn {
-  padding: var(--space-12) var(--space-20);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  border-bottom: 2px solid transparent;
-  transition: all var(--duration-fast) var(--ease-standard);
-}
-
-.panel-tab-btn.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  background-color: var(--color-surface);
-}
-
-.panel-content {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-.panel-section {
-  display: none;
-  flex-direction: column;
-  height: 100%;
-}
-
-.panel-section.active {
-  display: flex;
-}
-
-.panel-header {
-  padding: var(--space-16);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 /* Events List */
 .events-list,
 .states-list {

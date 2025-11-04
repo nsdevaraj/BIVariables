@@ -598,16 +598,15 @@ class BIConfigBuilder {
         } else {
             console.error('addStateBtn not found');
         }
-        
-        // Clear debug button - removed in new UI
-        // const clearDebugBtn = document.getElementById('clearDebugBtn');
-        // if (clearDebugBtn) {
-        //     clearDebugBtn.addEventListener('click', () => this.clearDebug());
-        // }
 
-        // Tab switching for sidebar
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+        });
+
+        // Sidebar tab switching
         document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => this.switchSidebarTab(e.target.dataset.tab));
+            btn.addEventListener('click', (e) => this.switchSidebarTab(e.target.dataset.sidebarTab));
         });
 
         // Variable search
@@ -805,31 +804,36 @@ class BIConfigBuilder {
         });
     }
 
+    switchTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+        // Update tab panels
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+
+        this.logDebug(`Switched to tab: ${tabName}`, 'info');
+    }
+
     switchSidebarTab(tabName) {
         // Update sidebar tab buttons
         document.querySelectorAll('.sidebar-tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        const targetBtn = document.querySelector(`.sidebar-tab-btn[data-tab="${tabName}"]`);
-        if (targetBtn) {
-            targetBtn.classList.add('active');
-        }
+        document.querySelector(`[data-sidebar-tab="${tabName}"]`).classList.add('active');
 
-        // Update sidebar panels
-        document.querySelectorAll('.sidebar-panel').forEach(panel => {
-            panel.classList.remove('active');
+        // Update sidebar tab content
+        document.querySelectorAll('.sidebar-tab-content').forEach(content => {
+            content.classList.remove('active');
         });
-        const targetPanel = document.getElementById(`${tabName}Panel`);
-        if (targetPanel) {
-            targetPanel.classList.add('active');
-        }
+        document.getElementById(`${tabName}TabContent`).classList.add('active');
 
-        this.logDebug(`Switched to ${tabName} tab`, 'info');
-    }
-
-    switchPanelTab(panelName) {
-        // Deprecated - kept for compatibility
-        this.switchSidebarTab(panelName);
+        this.logDebug(`Switched to sidebar tab: ${tabName}`, 'info');
     }
 
     renderVariables() {
@@ -850,7 +854,15 @@ class BIConfigBuilder {
         element.innerHTML = `
             <div class="variable-header">
                 <div class="variable-name">${variable.name}</div>
-                <div class="variable-type">${this.getTypeIcon(variable.type)} ${variable.type}</div>
+                <div class="variable-actions">
+                    <div class="variable-type">${this.getTypeIcon(variable.type)} ${variable.type}</div>
+                    <button class="edit-btn" data-variable-id="${variable.id}" title="Edit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div class="variable-value">Current: ${this.formatValue(variable.current_value)}</div>
         `;
@@ -858,8 +870,12 @@ class BIConfigBuilder {
         // Make draggable
         this.makeVariableDraggable(element, variable);
         
-        // Click to select
-        element.addEventListener('click', () => this.selectVariable(variable));
+        // Add edit button handler
+        const editBtn = element.querySelector('.edit-btn');
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.editVariable(variable.id);
+        });
         
         return element;
     }
@@ -980,27 +996,9 @@ class BIConfigBuilder {
     }
 
     updatePropertiesPanel() {
-        const propertiesContent = document.getElementById('propertiesContent');
-        const selectionIndicator = document.getElementById('selectionIndicator');
-        
-        if (!this.selectedItem) {
-            propertiesContent.innerHTML = '<div class="empty-state"><p>👆 Select a variable or element to view properties</p></div>';
-            selectionIndicator.textContent = 'No selection';
-            return;
-        }
-        
-        const { type, data } = this.selectedItem;
-        selectionIndicator.textContent = `${type}: ${data.name}`;
-        
-        if (type === 'variable') {
-            propertiesContent.innerHTML = this.renderVariableProperties(data);
-        } else if (type === 'element') {
-            propertiesContent.innerHTML = this.renderElementPropertiesPanel(data);
-        } else if (type === 'event') {
-            propertiesContent.innerHTML = this.renderEventProperties(data);
-        } else if (type === 'state') {
-            propertiesContent.innerHTML = this.renderStateProperties(data);
-        }
+        // Properties panel has been removed - properties are now edited via edit buttons
+        // This method is kept as a no-op for compatibility
+        return;
     }
 
     renderVariableProperties(variable) {
@@ -1208,14 +1206,26 @@ class BIConfigBuilder {
         element.innerHTML = `
             <div class="event-header">
                 <span class="event-name">⚡ ${event.name}</span>
-                <span class="status status--info">${event.action}</span>
+                <div class="event-actions">
+                    <span class="status status--info">${event.action}</span>
+                    <button class="edit-btn" data-event-id="${event.id}" title="Edit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div class="event-trigger">Trigger: ${event.trigger.replace('element.', '')}</div>
             <div class="event-trigger">Target: ${targetName}</div>
         `;
         
-        // Click to select
-        element.addEventListener('click', () => this.selectEvent(event));
+        // Add edit button handler
+        const editBtn = element.querySelector('.edit-btn');
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.editEvent(event.id);
+        });
         
         return element;
     }
@@ -1261,7 +1271,15 @@ class BIConfigBuilder {
             element.innerHTML = `
                 <div class="state-header">
                     <span class="state-name">${categoryIcon} ${state.name}</span>
-                    <span class="status status--success">Active</span>
+                    <div class="state-actions">
+                        <span class="status status--success">Active</span>
+                        <button class="edit-btn" data-state-id="${state.id}" title="Edit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="state-condition">When: ${variableName} ${operator} ${compareDisplay}</div>
                 <div class="state-condition">Effects: ${state.effects.length} element(s)</div>
@@ -1271,7 +1289,15 @@ class BIConfigBuilder {
             element.innerHTML = `
                 <div class="state-header">
                     <span class="state-name">${categoryIcon} ${state.name}</span>
-                    <span class="status status--success">Active</span>
+                    <div class="state-actions">
+                        <span class="status status--success">Active</span>
+                        <button class="edit-btn" data-state-id="${state.id}" title="Edit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="state-condition">Condition: ${state.condition}</div>
                 <div class="state-condition">Effects: ${state.effects.length} element(s)</div>
@@ -1279,8 +1305,12 @@ class BIConfigBuilder {
             `;
         }
         
-        // Click to select
-        element.addEventListener('click', () => this.selectState(state));
+        // Add edit button handler
+        const editBtn = element.querySelector('.edit-btn');
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.editState(state.id);
+        });
         
         return element;
     }
@@ -1295,6 +1325,21 @@ class BIConfigBuilder {
                 return '🧭';
             default:
                 return '🎯';
+        }
+    }
+
+    getEventCategoryIcon(category) {
+        switch (category) {
+            case 'Filter':
+                return '🔽';
+            case 'Bookmark':
+                return '🔖';
+            case 'Navigation':
+                return '🧭';
+            case 'General':
+                return '⚡';
+            default:
+                return '⚡';
         }
     }
 
@@ -1424,8 +1469,10 @@ class BIConfigBuilder {
         // Initialize with value input visible
         this.handleCompareTypeChange('value');
         
-        // Reset editing flag
-        delete this.editingState;
+        // Initialize editing state with empty effects array for new state
+        this.editingState = {
+            effects: []
+        };
         
         // Render the state changes list
         this.renderStateChangesList();
@@ -2257,41 +2304,6 @@ class BIConfigBuilder {
         this.showStateModal();
     }
 
-    showStateModal() {
-        const title = document.getElementById('stateModalTitle');
-        const form = document.getElementById('stateForm');
-        const variableSelect = document.getElementById('stateVariable');
-        const compareTypeSelect = document.getElementById('compareType');
-        const compareVariableSelect = document.getElementById('compareVariable');
-        
-        title.textContent = 'Add State';
-        form.reset();
-        
-        // Populate variable dropdowns
-        this.populateVariableSelect(variableSelect);
-        this.populateVariableSelect(compareVariableSelect);
-        
-        // Set up compare type change handler
-        const handleCompareTypeChange = (e) => {
-            this.handleCompareTypeChange(e.target.value);
-        };
-        compareTypeSelect.addEventListener('change', handleCompareTypeChange);
-        
-        // Store reference for cleanup
-        compareTypeSelect._changeHandler = handleCompareTypeChange;
-        
-        // Initialize with value input visible
-        this.handleCompareTypeChange('value');
-        
-        // Reset editing flag
-        delete this.editingState;
-        
-        // Render the state changes list
-        this.renderStateChangesList();
-        
-        this.showModal('stateModal');
-    }
-
     clearWorkspace() {
         if (confirm('Are you sure you want to clear the workspace? This will remove all visual elements.')) {
             this.visualElements = [];
@@ -2643,18 +2655,23 @@ class BIConfigBuilder {
     }
 
     logDebug(message, type = 'info') {
-        const debugConsole = document.getElementById('debugConsole');
+        // Log to browser console since debug panel was removed
         const timestamp = new Date().toLocaleTimeString();
+        const logMessage = `[${timestamp}] ${message}`;
         
-        const messageElement = document.createElement('div');
-        messageElement.className = `debug-message ${type}`;
-        messageElement.innerHTML = `
-            <span class="timestamp">[${timestamp}]</span>
-            <span class="message">${message}</span>
-        `;
-        
-        debugConsole.appendChild(messageElement);
-        debugConsole.scrollTop = debugConsole.scrollHeight;
+        switch(type) {
+            case 'error':
+                console.error(logMessage);
+                break;
+            case 'warning':
+                console.warn(logMessage);
+                break;
+            case 'success':
+                console.log(`✓ ${logMessage}`);
+                break;
+            default:
+                console.log(logMessage);
+        }
     }
 }
 

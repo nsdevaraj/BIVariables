@@ -21,10 +21,14 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Left Panel: Visual Elements Workspace -->
+            <!-- Center Workspace -->
             <section class="workspace">
                 <div class="workspace-header">
-                    <h3 class="workspace-title">📊 Visual Elements</h3>
+                    <div class="workspace-tabs">
+                        <!-- <button class="tab-btn active" data-tab="connections">🔗 Connections</button> -->
+                        <button class="tab-btn active" data-tab="elements">📊 Visual Elements</button>
+                        <!-- <button class="tab-btn" data-tab="flow">🌊 Flow Diagram</button> -->
+                    </div>
                     <div class="workspace-actions">
                         <button class="btn btn--secondary btn--sm" id="addElementBtn">+ Add Element</button>
                         <button class="btn btn--outline btn--sm" id="clearWorkspaceBtn">Clear</button>
@@ -32,23 +36,45 @@
                 </div>
                 
                 <div class="workspace-content">
-                    <div class="elements-grid" id="elementsGrid">
-                        <!-- Visual elements will be populated here -->
+                    <!-- Connections Tab -->
+                    <!-- <div class="tab-panel active" id="connectionsTab">
+                        <div class="connections-canvas" id="connectionsCanvas">
+                            <div class="canvas-message">
+                                <p>📍 Drag variables from the left panel to create connections</p>
+                                <p>🎯 Drop on visual elements to establish event bindings</p>
+                            </div>
+                        </div>
+                    </div>
+                     -->
+                    <!-- Elements Tab -->
+                    <div class="tab-panel active" id="elementsTab">
+                        <div class="elements-grid" id="elementsGrid">
+                            <!-- Visual elements will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Flow Diagram Tab -->
+                    <div class="tab-panel" id="flowTab">
+                        <div class="flow-diagram" id="flowDiagram">
+                            <div class="flow-message">
+                                <p>🌊 Flow diagram shows data relationships</p>
+                                <p>Events → Variables → States → Elements</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Right Sidebar: Tabbed Configuration Panel -->
+            <!-- Right Sidebar: Tabbed Panel -->
             <aside class="sidebar sidebar--right">
                 <div class="sidebar-tabs">
-                    <button class="sidebar-tab-btn active" data-tab="variables">Variables</button>
-                    <button class="sidebar-tab-btn" data-tab="properties">Properties</button>
-                    <button class="sidebar-tab-btn" data-tab="events">Events</button>
-                    <button class="sidebar-tab-btn" data-tab="states">States</button>
+                    <button class="sidebar-tab-btn active" data-sidebar-tab="variables">Variables</button>
+                    <button class="sidebar-tab-btn" data-sidebar-tab="events">Events</button>
+                    <button class="sidebar-tab-btn" data-sidebar-tab="states">States</button>
                 </div>
                 
                 <!-- Variables Tab -->
-                <div class="sidebar-panel active" id="variablesPanel">
+                <div class="sidebar-tab-content active" id="variablesTabContent">
                     <div class="sidebar-header">
                         <h3>Global Variables</h3>
                         <button class="btn btn--primary btn--sm" id="addVariableBtn">+ Add</button>
@@ -63,25 +89,11 @@
                     </div>
                 </div>
                 
-                <!-- Properties Tab -->
-                <div class="sidebar-panel" id="propertiesPanel">
-                    <div class="sidebar-header">
-                        <h3>Properties</h3>
-                        <span class="selection-indicator" id="selectionIndicator">No selection</span>
-                    </div>
-                    
-                    <div class="properties-content" id="propertiesContent">
-                        <div class="empty-state">
-                            <p>👆 Select a variable or element to view properties</p>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- Events Tab -->
-                <div class="sidebar-panel" id="eventsPanel">
+                <div class="sidebar-tab-content" id="eventsTabContent">
                     <div class="sidebar-header">
                         <h3>Event Configuration</h3>
-                        <button class="btn btn--primary btn--sm" id="addEventBtn">+ Add Event</button>
+                        <button class="btn btn--primary btn--sm" id="addEventBtn">+ Add</button>
                     </div>
                     <div class="events-list" id="eventsList">
                         <!-- Events will be populated here -->
@@ -89,10 +101,10 @@
                 </div>
                 
                 <!-- States Tab -->
-                <div class="sidebar-panel" id="statesPanel">
+                <div class="sidebar-tab-content" id="statesTabContent">
                     <div class="sidebar-header">
                         <h3>State Configuration</h3>
-                        <button class="btn btn--primary btn--sm" id="addStateBtn">+ Add State</button>
+                        <button class="btn btn--primary btn--sm" id="addStateBtn">+ Add</button>
                     </div>
                     <div class="states-list" id="statesList">
                         <!-- States will be populated here -->
@@ -306,8 +318,7 @@
                 </form>
 
                 <!-- Visual Elements and State Changes -->
-                <div class="state-changes-section">
-                    <h4>Visual Elements & State Changes</h4>
+                <div class="state-changes-section"> 
                     <div class="state-changes-list" id="stateChangesList">
                         <!-- State changes will be populated by JavaScript -->
                     </div>

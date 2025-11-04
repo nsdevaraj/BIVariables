@@ -9,6 +9,8 @@ class BIConfigBuilder {
         this.connections = [];
         this.selectedItem = null;
         this.isTestMode = false;
+        this.variablePreviousValues = {}; // Track previous values for onChange detection
+        this.changedVariables = new Set(); // Track which variables changed
         
         // Initialize with sample data
         this.initializeSampleData();
@@ -129,7 +131,8 @@ class BIConfigBuilder {
                 properties: {
                     title: "Regional Sales Performance",
                     data_source: "sales_data",
-                    filter_by: "region_filter"
+                    filter_by: "region_filter",
+                    visible: true
                 },
                 states: [
                     {
@@ -149,7 +152,8 @@ class BIConfigBuilder {
                 properties: {
                     value: "$2.5M",
                     trend: "+15%",
-                    color: "green"
+                    color: "green",
+                    visible: true
                 },
                 states: [
                     {
@@ -174,7 +178,8 @@ class BIConfigBuilder {
                 icon: "🔽",
                 properties: {
                     options: ["All", "North America", "Europe", "Asia Pacific"],
-                    selected_value: "region_filter"
+                    selected_value: "region_filter",
+                    visible: true
                 },
                 events: [
                     {
@@ -193,7 +198,8 @@ class BIConfigBuilder {
                 properties: {
                     data_source: "sales_data",
                     columns: ["Product", "Sales", "Region", "Date"],
-                    page_size: 10
+                    page_size: 10,
+                    visible: true
                 },
                 states: [
                     {
@@ -720,6 +726,11 @@ class BIConfigBuilder {
 
         closeStateModal.addEventListener('click', () => {
             // Clean up event listeners
+            const operatorSelect = document.getElementById('stateOperator');
+            if (operatorSelect && operatorSelect._operatorChangeHandler) {
+                operatorSelect.removeEventListener('change', operatorSelect._operatorChangeHandler);
+                delete operatorSelect._operatorChangeHandler;
+            }
             const compareTypeSelect = document.getElementById('compareType');
             if (compareTypeSelect && compareTypeSelect._changeHandler) {
                 compareTypeSelect.removeEventListener('change', compareTypeSelect._changeHandler);
@@ -729,6 +740,11 @@ class BIConfigBuilder {
         });
         cancelStateBtn.addEventListener('click', () => {
             // Clean up event listeners
+            const operatorSelect = document.getElementById('stateOperator');
+            if (operatorSelect && operatorSelect._operatorChangeHandler) {
+                operatorSelect.removeEventListener('change', operatorSelect._operatorChangeHandler);
+                delete operatorSelect._operatorChangeHandler;
+            }
             const compareTypeSelect = document.getElementById('compareType');
             if (compareTypeSelect && compareTypeSelect._changeHandler) {
                 compareTypeSelect.removeEventListener('change', compareTypeSelect._changeHandler);
@@ -738,6 +754,11 @@ class BIConfigBuilder {
         });
         saveStateBtn.addEventListener('click', () => {
             // Clean up event listeners before saving
+            const operatorSelect = document.getElementById('stateOperator');
+            if (operatorSelect && operatorSelect._operatorChangeHandler) {
+                operatorSelect.removeEventListener('change', operatorSelect._operatorChangeHandler);
+                delete operatorSelect._operatorChangeHandler;
+            }
             const compareTypeSelect = document.getElementById('compareType');
             if (compareTypeSelect && compareTypeSelect._changeHandler) {
                 compareTypeSelect.removeEventListener('change', compareTypeSelect._changeHandler);
@@ -758,6 +779,11 @@ class BIConfigBuilder {
                             delete typeSelect._changeHandler;
                         }
                     } else if (modal.id === 'stateModal') {
+                        const operatorSelect = document.getElementById('stateOperator');
+                        if (operatorSelect && operatorSelect._operatorChangeHandler) {
+                            operatorSelect.removeEventListener('change', operatorSelect._operatorChangeHandler);
+                            delete operatorSelect._operatorChangeHandler;
+                        }
                         const compareTypeSelect = document.getElementById('compareType');
                         if (compareTypeSelect && compareTypeSelect._changeHandler) {
                             compareTypeSelect.removeEventListener('change', compareTypeSelect._changeHandler);
@@ -1447,6 +1473,7 @@ class BIConfigBuilder {
         const title = document.getElementById('stateModalTitle');
         const form = document.getElementById('stateForm');
         const variableSelect = document.getElementById('stateVariable');
+        const operatorSelect = document.getElementById('stateOperator');
         const compareTypeSelect = document.getElementById('compareType');
         const compareVariableSelect = document.getElementById('compareVariable');
         
@@ -1456,6 +1483,13 @@ class BIConfigBuilder {
         // Populate variable dropdowns
         this.populateVariableSelect(variableSelect);
         this.populateVariableSelect(compareVariableSelect);
+        
+        // Set up operator change handler
+        const handleOperatorChange = (e) => {
+            this.handleOperatorChange(e.target.value);
+        };
+        operatorSelect.addEventListener('change', handleOperatorChange);
+        operatorSelect._operatorChangeHandler = handleOperatorChange;
         
         // Set up compare type change handler
         const handleCompareTypeChange = (e) => {
@@ -1467,6 +1501,7 @@ class BIConfigBuilder {
         compareTypeSelect._changeHandler = handleCompareTypeChange;
         
         // Initialize with value input visible
+        this.handleOperatorChange('==');
         this.handleCompareTypeChange('value');
         
         // Initialize editing state with empty effects array for new state
@@ -1820,6 +1855,34 @@ class BIConfigBuilder {
         }
     }
 
+    handleVariableTypeChange(type) {
+        const numberVariableFields = document.getElementById('numberVariableFields');
+        
+        if (type === 'NumberVariable') {
+            numberVariableFields.style.display = 'block';
+        } else {
+            numberVariableFields.style.display = 'none';
+        }
+    }
+
+    handleOperatorChange(operator) {
+        const compareTypeGroup = document.getElementById('compareType').closest('.form-group');
+        const valueGroup = document.getElementById('valueGroup');
+        const variableGroup = document.getElementById('variableGroup');
+        
+        if (operator === 'onChange') {
+            // Hide comparison fields for onChange operator
+            compareTypeGroup.style.display = 'none';
+            valueGroup.style.display = 'none';
+            variableGroup.style.display = 'none';
+        } else {
+            // Show comparison fields for other operators
+            compareTypeGroup.style.display = 'block';
+            const compareType = document.getElementById('compareType').value;
+            this.handleCompareTypeChange(compareType);
+        }
+    }
+
     handleCompareTypeChange(compareType) {
         const valueGroup = document.getElementById('valueGroup');
         const variableGroup = document.getElementById('variableGroup');
@@ -1924,22 +1987,30 @@ class BIConfigBuilder {
         }
         
         let compareValue;
-        if (compareType === 'value') {
-            if (!value.trim()) {
-                alert('Please enter a condition value');
-                return;
-            }
-            compareValue = value.trim();
-        } else {
-            if (!compareVariable) {
-                alert('Please select a variable to compare against');
-                return;
-            }
-            compareValue = compareVariable;
-        }
+        let condition;
         
-        // Build the condition string
-        const condition = `${variable} ${operator} ${compareValue}`;
+        if (operator === 'onChange') {
+            // For onChange operator, no comparison value needed
+            condition = `${variable} onChange`;
+        } else {
+            // For other operators, require comparison value
+            if (compareType === 'value') {
+                if (!value.trim()) {
+                    alert('Please enter a condition value');
+                    return;
+                }
+                compareValue = value.trim();
+            } else {
+                if (!compareVariable) {
+                    alert('Please select a variable to compare against');
+                    return;
+                }
+                compareValue = compareVariable;
+            }
+            
+            // Build the condition string
+            condition = `${variable} ${operator} ${compareValue}`;
+        }
         
         // Collect effects from the form
         const effects = this.collectStateEffects();
@@ -2159,21 +2230,36 @@ class BIConfigBuilder {
         
         // Parse the condition
         const conditionParts = state.condition.split(' ');
-        if (conditionParts.length >= 3) {
+        let operator = '=='; // Default operator
+        
+        if (conditionParts.length >= 2) {
             const variableId = conditionParts[0];
-            const operator = conditionParts[1];
-            const compareValue = conditionParts.slice(2).join(' ');
+            operator = conditionParts[1];
             
             document.getElementById('stateVariable').value = variableId;
             document.getElementById('stateOperator').value = operator;
-            document.getElementById('compareType').value = state.compareType || 'value';
             
-            if (state.compareType === 'variable') {
-                document.getElementById('compareVariable').value = compareValue;
-                document.getElementById('stateValue').value = '';
-            } else {
-                document.getElementById('stateValue').value = compareValue;
-                document.getElementById('compareVariable').value = '';
+            // Set up operator change handler for edit mode
+            const operatorSelect = document.getElementById('stateOperator');
+            const handleOperatorChange = (e) => {
+                this.handleOperatorChange(e.target.value);
+            };
+            operatorSelect.addEventListener('change', handleOperatorChange);
+            operatorSelect._operatorChangeHandler = handleOperatorChange;
+            
+            // Only set comparison values if not onChange operator
+            if (operator !== 'onChange' && conditionParts.length >= 3) {
+                const compareValue = conditionParts.slice(2).join(' ');
+                
+                document.getElementById('compareType').value = state.compareType || 'value';
+                
+                if (state.compareType === 'variable') {
+                    document.getElementById('compareVariable').value = compareValue;
+                    document.getElementById('stateValue').value = '';
+                } else {
+                    document.getElementById('stateValue').value = compareValue;
+                    document.getElementById('compareVariable').value = '';
+                }
             }
         }
         
@@ -2190,7 +2276,8 @@ class BIConfigBuilder {
         // Store reference for cleanup
         compareTypeSelect._changeHandler = handleCompareTypeChange;
         
-        // Initialize with current compare type
+        // Initialize with current operator and compare type
+        this.handleOperatorChange(operator);
         this.handleCompareTypeChange(state.compareType || 'value');
         
         // Store the state being edited
@@ -2513,7 +2600,17 @@ class BIConfigBuilder {
     updateVariableValue(variableId, newValue) {
         const variable = this.globalVariables.find(v => v.id === variableId);
         if (variable) {
+            // Track previous value for onChange detection
+            const previousValue = variable.current_value;
+            const hasChanged = previousValue !== newValue;
+            
+            // Update current value
             variable.current_value = newValue;
+            
+            // Mark variable as changed if value actually changed
+            if (hasChanged) {
+                this.changedVariables.add(variableId);
+            }
             
             // Update the monitor display
             const monitorValue = document.querySelector(`[data-variable="${variableId}"]`);
@@ -2532,6 +2629,9 @@ class BIConfigBuilder {
             
             // Check and trigger state changes
             this.evaluateStates();
+            
+            // Clear the changed flag after evaluation
+            this.changedVariables.delete(variableId);
         }
     }
 
@@ -2560,15 +2660,14 @@ class BIConfigBuilder {
     }
 
     evaluateCondition(condition) {
-        // Parse condition: "variable_id operator compare_value"
+        // Parse condition: "variable_id operator [compare_value]"
         const parts = condition.split(' ');
-        if (parts.length < 3) {
+        if (parts.length < 2) {
             return false;
         }
         
         const variableId = parts[0];
         const operator = parts[1];
-        const compareValue = parts.slice(2).join(' ');
         
         // Find the variable
         const variable = this.globalVariables.find(v => v.id === variableId);
@@ -2576,6 +2675,18 @@ class BIConfigBuilder {
             return false;
         }
         
+        // Handle onChange operator
+        if (operator === 'onChange') {
+            // Return true if this variable was just changed
+            return this.changedVariables.has(variableId);
+        }
+        
+        // For other operators, need comparison value
+        if (parts.length < 3) {
+            return false;
+        }
+        
+        const compareValue = parts.slice(2).join(' ');
         const currentValue = variable.current_value;
         let finalCompareValue = compareValue;
         
